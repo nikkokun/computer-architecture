@@ -15,23 +15,35 @@ void matrix_multiply(int column, int row, float a[column][row], float b[column][
 
 int main()
 {
-	float a[4][4] = {{1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}};
-	float b[4][4]= {{1,1,1,1}, {1,1,1,1}, {1,1,1,1}, {1,1,1,1}};
+	float a[4][4] = {{2,1,3,4}, {3,1,2,5}, {7,8,9,1}, {3,6,7,4}};
+	float b[4][4]= {{1,5,7,8}, {9,1,2,6}, {7,4,1,9}, {1,7,7,8}};
+	float result[4][4] = {{0,0,0,0}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}};
 
 	int total = sizeof(a)/sizeof(float);
 	int column = sizeof(a[0])/sizeof(float);
 	int row = total / column;
 
-	float result[column][row];
+	printf("matrix a:\n");
+	for (int i = 0; i < column; ++i) {
+		for (int j = 0; j < row; ++j) {
+			printf("%f, ", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("matrix b:\n");
+	for (int i = 0; i < column; ++i) {
+		for (int j = 0; j < row; ++j) {
+			printf("%f, ", b[i][j]);
+		}
+		printf("\n");
+	}
 
 	matrix_multiply(column, row, a, b, result);
 
-	printf("total: %d\n", total);
-	printf("column: %d\n", column);
-	printf("row: %d\n", row);
-
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 4; ++j) {
+	printf("result\n");
+	for (int i = 0; i < column; ++i) {
+		for (int j = 0; j < row; ++j) {
 			printf("%f, ", result[i][j]);
 		}
 		printf("\n");

@@ -22,7 +22,7 @@ array3:	.float 0.0, 0.0, 0.0, 0.0
 	.text
 	.globl main
 main:
-	sw $31 saved_ret_pc
+	sw $31 saved_ret_pc #return address
 
 	.data
 lb_:	.asciiz "Vector Addition\n"
