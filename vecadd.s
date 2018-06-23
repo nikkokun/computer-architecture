@@ -15,7 +15,7 @@ m6:	.asciiz "Expect two address error exceptions:\n"
 	.globl array1
 	.globl array2
 	.globl array3
-array1:	.float 3.14159265, 2.71828183, 1.0,  -0.10
+array1:	.float 3.14159265, 2.71828183, 1.0, -0.10
 array2:	.float 2.71828183, 1.0, 3.14159265, 1.0
 array3:	.float 0.0, 0.0, 0.0, 0.0
 

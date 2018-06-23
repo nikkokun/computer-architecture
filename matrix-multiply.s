@@ -15,21 +15,20 @@ m6:	.asciiz "Expect two address error exceptions:\n"
 	.globl array1
 	.globl array2
 	.globl array3
-array1:	.float 1.0, 0.0, 3.14, 2.72, 2.72, 1.0, 0.0, 3.14, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 0.0 4.0
-
+array1:	.float 1.0, 0.0, 3.14, 2.72, 2.72, 1.0, 0.0, 3.14, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 4.0
 array2:	.float 1.0, 1.0, 0.0, 3.14, 0.0, 1.0, 3.14, 2.72, 0.0, 1.0, 1.0, 0.0, 4.0, 3.0, 2.0, 1.0
-
 array3:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+
+	.data
+lb_:	.asciiz "Vector Addition\n"
+lbd_:	.byte 1, -1, 0, 128
+lbd1_:	.word 0x76543210, 0xfedcba98
 
 	.text
 	.globl main
 main:
 	sw $31 saved_ret_pc #return address
 
-	.data
-lb_:	.asciiz "Vector Addition\n"
-lbd_:	.byte 1, -1, 0, 128
-lbd1_:	.word 0x76543210, 0xfedcba98
 	.text
 	li $v0 4	# syscall 4 (print_str)
 	la $a0 lb_
@@ -37,27 +36,67 @@ lbd1_:	.word 0x76543210, 0xfedcba98
 
 # main program: add array1 & array2, store in array3
 # first, the setup
-	addi $t0 4	# i
-	addi $t1 4 # j
-	addi $t2 4 # k
+	addi $t0 5	# i
 	addi $t3 0 # index
 	addi $s0 4 #size
+	addi $s1 $s1 -1 # -1
 
 	la $t4 array1
 	la $t5 array2
 	la $t6 array3
 
-loop_i:	
-	li $t1 4
-	j loop_j #call loop j
+	jal loop_i
+
+loop_i:
 	addi $t0 $t0 -1 #count down i
-	bne $t0 $0 loop_i
+	nop
+	bne $t0 $0 call_j #call loop j
+	jal endloop
+
 
 loop_j:
-	li $t2 4
-	j loop_k #call loop k
 	addi $t1 $t1 -1 #count down j
-	bne $t1 $0 loop_j
+	nop
+	bne $t1 $0 call_k #call loop k
+	jal after_i
+
+after_j:
+	addi $t4 $t4 -12
+	nop
+	addi $t5 $t5 -48 #-64 after J adjasjdlas
+	nop
+	addi $t5 $t5 4
+	nop
+	add $t6 $t6 4 #move to the next index in array 3, array3[i][j]
+	nop
+	jal loop_j
+
+after_i:
+	#setting the index to [i][j]
+	addi $t4 $t4 16
+	nop
+	addi $t5 $t5 -16
+	nop
+	jal loop_i
+
+after_k:
+	#setting the index to [i][k]
+	addi $t4 $t4 4 #move to the next index in array 1, array1[i][k]
+	nop
+	#setting the index to [k][j]
+	addi $t5 $t5 16 #move to the next index in array 2, array2[k][j]
+	nop
+	jal loop_k
+
+call_k:
+	li $t2 4
+	jal loop_k
+
+call_j:
+	li $t1 5
+	jal loop_j
+
+
 
 loop_k:
 
@@ -71,37 +110,11 @@ loop_k:
 	nop
 	swc1 $f3 0($t6) 
 
-
-	#setting the index to [i][k]
-	li $t3 0
-	mult $t0 $s5
-	mflo $t3
-	add $t3 $t3 $t2
-	mult $t3 $s5
-	mflo $t3
-	add $t4 $t4 $t3#move to the next index in array 1, array1[i][k]
-
-	#setting the index to [k][j]
-	li $t3 0
-	mult $t2 $s5
-	mflo $t3
-	add $t3 $t3 $t1
-	mult $t3 $s5
-	mflo $t3
-	add $t5 $t5 $t3 #move to the next index in array 2, array2[k][j]
-
-	#setting the index to [i][j]
-	li $t3 0
-	mult $t0 $s5
-	mflo $t3
-	add $t3 $t3 $t1
-	mult $t3 $s5
-	mflo $t3
-	add $t6 $t6 $t3 #move to the next index in array 3, array3[i][j]
-
 	addi $t2 $t2 -1 #count down k
-	bne $t2 $0 loop_k
+	bne $t2 $0 after_k
+	jal after_j
 
+endloop:
 
 # Done adding...
 	.data
