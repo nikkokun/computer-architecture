@@ -36,11 +36,10 @@ main:
 
 # main program: add array1 & array2, store in array3
 # first, the setup
-	addi $t0 4	# i
+	addi $t0 5	# i
 	addi $t3 0 # index
 	addi $s0 4 #size
 	addi $s1 $s1 -1 # -1
-	li $s2 1
 
 	la $t4 array1
 	la $t5 array2
@@ -49,96 +48,57 @@ main:
 	jal loop_i
 
 loop_i:
+	addi $t0 $t0 -1 #count down i
+	nop
 	bne $t0 $0 call_j #call loop j
 	jal endloop
 
+
 loop_j:
-	
+	addi $t1 $t1 -1 #count down j
+	nop
 	bne $t1 $0 call_k #call loop k
 	jal after_i
 
 after_j:
-	la $t4 array1
-	la $t5 array2
-	la $t6 array3
-	addi $t1 $t1 -1 #count down j
+	addi $t4 $t4 -12
+	nop
+	addi $t5 $t5 -48 #-64 after J adjasjdlas
+	nop
+	addi $t5 $t5 4
+	nop
+	add $t6 $t6 4 #move to the next index in array 3, array3[i][j]
 	nop
 	jal loop_j
 
 after_i:
-	la $t4 array1
-	la $t5 array2
-	la $t6 array3
-	addi $t0 $t0 -1 #count down i
+	#setting the index to [i][j]
+	addi $t4 $t4 16
+	nop
+	addi $t5 $t5 -16
 	nop
 	jal loop_i
 
 after_k:
-	la $t4 array1
-	la $t5 array2
-	la $t6 array3
-	addi $t2 $t2 -1 #count down k
+	#setting the index to [i][k]
+	addi $t4 $t4 4 #move to the next index in array 1, array1[i][k]
+	nop
+	#setting the index to [k][j]
+	addi $t5 $t5 16 #move to the next index in array 2, array2[k][j]
 	nop
 	jal loop_k
 
 call_k:
-	move $t2 $s0
+	li $t2 4
 	jal loop_k
 
 call_j:
-	move $t1 $s0
+	li $t1 5
 	jal loop_j
 
 
+
 loop_k:
-
-	#setting the index to [i][k]
-	li $t3 0
-	li $t8 0
-	li $t9 0
-	#inverse i
-	sub $t8 $s0 $t0
-	#inverse k
-	sub $t9 $s0 $t2
-
-	mult $t8 $s0
-	mflo $t3
-	add $t3 $t3 $t9
-	mult $t3 $s0
-	mflo $t3
-	add $t4 $t4 $t3#move to the next index in array 1, array1[i][k]
-
-	#setting the index to [k][j]
-	li $t3 0
-	li $t8 0
-	li $t9 0
-	#inverse k
-	sub $t8 $s0 $t2
-	#inverse j
-	sub $t9 $s0 $t1
-
-	mult $t8 $s0
-	mflo $t3
-	add $t3 $t3 $t9
-	mult $t3 $s0
-	mflo $t3
-	add $t5 $t5 $t3 #move to the next index in array 2, array2[k][j]
-
-	#setting the index to [i][j]
-	li $t3 0
-	li $t8 0
-	li $t9 0
-	#inverse i
-	sub $t8 $s0 $t0
-	#inverse j
-	sub $t9 $s0 $t1
-
-	mult $t8 $s0
-	mflo $t3
-	add $t3 $t3 $t9
-	mult $t3 $s0
-	mflo $t3
-	add $t6 $t6 $t3 #move to the next index in array 3, array3[i][j]
 
 	lwc1 $f0 0($t4) #get the contents of array1[i][k]
 	lwc1 $f1 0($t5) #get the contents of array2[k][j]
@@ -148,9 +108,10 @@ loop_k:
 	nop
 	add.s $f3 $f3 $f2
 	nop
-	swc1 $f3 0($t6)
+	swc1 $f3 0($t6) 
 
-	bne $t2 $s2 after_k
+	addi $t2 $t2 -1 #count down k
+	bne $t2 $0 after_k
 	jal after_j
 
 endloop:
