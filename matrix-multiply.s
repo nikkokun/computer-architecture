@@ -177,6 +177,7 @@ sm2:	.asciiz "\n"
 	la $a0 sm2
 	syscall
 
+
 	addi $t0 $t0 -1
 	addi $a1 $a1 4
 	bne $t0 $0 ploop

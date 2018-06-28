@@ -16,7 +16,7 @@ void matrix_multiply(int column, int row, float a[column][row], float b[column][
 int main()
 {
 	float a[4][4] = {{1,0,3.14,2.72}, {2.72,1,0,3.14}, {1,1,1,1}, {1,2,3,4}};
-	float b[4][4]= {{1,1,0,3.14}, {0,1,3.14,2.72}, {0,1,1,0}, {4,3,2,1}};
+	float b[4][4] = {{1,1,0,3.14}, {0,1,3.14,2.72}, {0,1,1,0}, {4,3,2,1}};
 	float result[4][4] = {{0,0,0,0}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}};
 
 	int total = sizeof(a)/sizeof(float);
