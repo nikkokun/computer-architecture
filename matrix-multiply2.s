@@ -36,7 +36,7 @@ main:
 
 # main program: add array1 & array2, store in array3
 # first, the setup
-	addi $t0 5	# i
+	addi $t0 4	# i
 	addi $t3 0 # index
 	addi $s0 4 #size
 	addi $s1 $s1 -1 # -1
@@ -48,15 +48,11 @@ main:
 	jal loop_i
 
 loop_i:
-	addi $t0 $t0 -1 #count down i
-	nop
 	bne $t0 $0 call_j #call loop j
 	jal endloop
 
 
 loop_j:
-	addi $t1 $t1 -1 #count down j
-	nop
 	bne $t1 $0 call_k #call loop k
 	jal after_i
 
@@ -68,6 +64,7 @@ after_j:
 	addi $t5 $t5 4
 	nop
 	add $t6 $t6 4 #move to the next index in array 3, array3[i][j]
+	addi $t1 $t1 -1 #count down j
 	nop
 	jal loop_j
 
@@ -77,6 +74,7 @@ after_i:
 	nop
 	addi $t5 $t5 -16
 	nop
+	addi $t0 $t0 -1 #count down i
 	jal loop_i
 
 after_k:
@@ -89,14 +87,12 @@ after_k:
 	jal loop_k
 
 call_k:
-	li $t2 4
+	move $t2 $s0
 	jal loop_k
 
 call_j:
-	li $t1 5
+	move $t1 $s0
 	jal loop_j
-
-
 
 loop_k:
 

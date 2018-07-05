@@ -41,7 +41,7 @@ main:
 # main program: add array1 & array2, store in array3
 # first, the setup
 	addi $t3 0 # index
-	addi $s0 5 #size
+	addi $s0 4 #size
 	move $t0 $s0 # i
 	addi $s1 $s1 -1 # -1
 	addi $s2 4 #float size
