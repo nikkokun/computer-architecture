@@ -15,19 +15,20 @@ m6:	.asciiz "Expect two address error exceptions:\n"
 	.globl array1
 	.globl array2
 	.globl array3
-array1:	.float 1.0, 0.0, 3.14, 2.72, 2.72, 1.0, 0.0, 3.14, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 4.0
-array2:	.float 1.0, 1.0, 0.0, 3.14, 0.0, 1.0, 3.14, 2.72, 0.0, 1.0, 1.0, 0.0, 4.0, 3.0, 2.0, 1.0
-array3:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+# array1:	.float 1.0, 0.0, 3.14, 2.72, 2.72, 1.0, 0.0, 3.14, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 4.0
+# array2:	.float 1.0, 1.0, 0.0, 3.14, 0.0, 1.0, 3.14, 2.72, 0.0, 1.0, 1.0, 0.0, 4.0, 3.0, 2.0, 1.0
+# array3:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
-# array1: .float 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
-# array2: .float 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
-# array3:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+array1: .float 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+array2: .float 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+array3:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
 	.data
 lb_:	.asciiz "Matrix Multiplication\n"
 lbd_:	.byte 1, -1, 0, 128
 lbd1_:	.word 0x76543210, 0xfedcba98
-
+space: .asciiz " "
+newline: .asciiz "\n"
 	.text
 	.globl main	
 main:
@@ -40,9 +41,9 @@ main:
 
 # main program: add array1 & array2, store in array3
 # first, the setup
-	addi $s0 4 #size
+	addi $s0 5 #size
 	move $t0 $s0 # i
-	addi $s1 $s1 -1 # -1
+	addi $s1 $s1 -1 # -1 used to invert the count down counters
 	addi $s2 4 #float size
 	li $t8 0 #print size
 
@@ -65,6 +66,10 @@ loop_i:
 loop_j:
 	move $t2 $s0
 	bne $t1 $0 loop_k #call loop k
+	#add new line
+	li $v0 4	# syscall 4 (print_str)
+	la $a0 newline
+	syscall
 	addi $t0 $t0 -1 #count down i
 	nop
 	j loop_i
@@ -125,6 +130,15 @@ loop_k:
 	addi $t2 $t2 -1 #count down k
 	nop
 	bne $t2 $0 loop_k #was too sleepy and put the count down elsewhere. Fixed it here.
+	#print the result
+	lwc1 $f12 0($t6)
+	li $v0 2
+	syscall
+	#add space
+	li $v0 4	# syscall 4 (print_str)
+	la $a0 space
+	syscall
+
 	addi $t1 $t1 -1 #count down j
 	nop
 	j loop_j
@@ -142,33 +156,6 @@ setIndex:
 	jr $ra
 
 endloop:
-
-# Done multiplying
-	.data
-sm:	.asciiz "Done Multiplying\n"
-	.text
-	li $v0 4	# syscall 4 (print_str)
-	la $a0 sm
-	syscall
-
-# see the list of syscalls at e.g.
-# http://www.inf.pucrs.br/~eduardob/disciplinas/arqi/mips/spim/syscall_codes.html
-	la $a1 array3
-	add $t0 $0 $t8
-ploop:	lwc1 $f12 0($a1)
-	li $v0 2	# syscall 2 (print_float)
-	syscall
-	.data
-sm2:	.asciiz "\n"
-	.text
-	li $v0 4	# syscall 4 (print_str)
-	la $a0 sm2
-	syscall
-
-
-	addi $t0 $t0 -1
-	add $a1 $a1 4
-	bne $t0 $0 ploop
 
 # Done with the program!
 	lw $31 saved_ret_pc
