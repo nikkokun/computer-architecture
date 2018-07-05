@@ -40,7 +40,6 @@ main:
 
 # main program: add array1 & array2, store in array3
 # first, the setup
-	addi $t3 0 # index
 	addi $s0 4 #size
 	move $t0 $s0 # i
 	addi $s1 $s1 -1 # -1
@@ -78,7 +77,6 @@ loop_k:
 	la $t6 array3
 
 	#setting the index to [i][k]
-	li $t3 0 
 	li $a0 0
 	li $a1 0
 	#inverse i
@@ -86,14 +84,11 @@ loop_k:
 	#inverse k
 	sub $a1 $s0 $t2
 
-	jal setIndex
+	jal setIndex #the index will be $v0
 	nop
-	move $t3 $v0
-	
-	add $t4 $t4 $t3#move to the next index in array 1, array1[i][k]
+	add $t4 $t4 $v0#move to the next index in array 1, array1[i][k]
 
 	#setting the index to [k][j]
-	li $t3 0
 	li $a0 0
 	li $a1 0
 	#inverse k
@@ -101,13 +96,11 @@ loop_k:
 	#inverse j
 	sub $a1 $s0 $t1
 
-	jal setIndex
-	move $t3 $v0
+	jal setIndex #the index will $v0
 	nop
-	add $t5 $t5 $t3 #move to the next index in array 2, array2[k][j]
+	add $t5 $t5 $v0 #move to the next index in array 2, array2[k][j]
 
 	#setting the index to [i][j]
-	li $t3 0
 	li $a0 0
 	li $a1 0
 	#inverse i
@@ -115,10 +108,9 @@ loop_k:
 	#inverse j
 	sub $a1 $s0 $t1
 
-	jal setIndex
-	move $t3 $v0
+	jal setIndex #the index be $v0
 	nop
-	add $t6 $t6 $t3 #move to the next index in array 3, array3[i][j]
+	add $t6 $t6 $v0 #move to the next index in array 3, array3[i][j]
 
 	lwc1 $f0 0($t4) #get the contents of array1[i][k]
 	lwc1 $f1 0($t5) #get the contents of array2[k][j]
